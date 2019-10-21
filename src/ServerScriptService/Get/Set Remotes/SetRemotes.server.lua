@@ -1,0 +1,2 @@
+--this script keeps track of the remotes starting with the word 'Set' 
+--sets the data specified in the function(s)
