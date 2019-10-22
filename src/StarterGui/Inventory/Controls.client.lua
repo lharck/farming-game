@@ -3,6 +3,7 @@ mouse = game.Players.LocalPlayer:GetMouse()
 mouseMoveEvent = nil
 inventory = script.Parent.Frame:WaitForChild("FullInventory")
 template = inventory.Template
+remotes = game.ReplicatedStorage.Remotes
 
 --The following controls work for mobile and pc. 
 currentSlot = nil 
@@ -19,6 +20,7 @@ end
 
 --allow player to drag item across screen when the click down on their mouse 
 function onClicked(item)
+	print("clicked")
 	if(item.Name ~= "Default")then
 		mouseMoveEvent = mouse.Move:Connect(onMouseMove)
 
@@ -35,16 +37,24 @@ end
 
 --move item back to most recently visited slot when player stops clicking
 function onClickEnded(item)
-	mouseMoveEvent:Disconnect() -- stop using our mouse moved event
+	print("click ended")
+	mouseMoveEvent = (not mouseMoveEvent) or mouseMoveEvent:Disconnect() -- stop using our mouse moved event
 	
 	--player dragged item to trash
 	if(currentSlot.Name == "Trash")then
 		--TODO: remove deleted slot from inventory
-		item.Parent = startingSlot --put slot back into starting slot and make it an empty slot
-		item.Name = "Default"
-		item.ImageTransparency = 1	
+		local deltedItem = remotes.setData:InvokeServer(item.Name, "Inventory", "Remove")
 		
-	elseif(startingSlot)then --player placed item in another item slot
+		if(deltedItem)then
+			item.Parent = startingSlot --put slot back into starting slot and make it an empty slot
+			item.Name = "Default"
+			item.ViewportFrame:FindFirstChildWhichIsA("Model"):Destroy()
+		else
+			warn(item.Name .. " is undeletable. ")	
+		end	
+	end
+	
+	if(startingSlot)then --player placed item in another item slot
 		local emptyItem = currentSlot:FindFirstChild("Default")
 		
 		--we are in an empty slot, place our item into there

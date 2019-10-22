@@ -2,7 +2,7 @@ players = game.Players
 data = require(script.Parent)
 
 players.PlayerAdded:Connect(function(player)
-	data:Wipe(player)
+	--data:Wipe(player)
 	local selectedSlot = "slot1"
 	data:LoadFromDataStore(player, selectedSlot)
 	
