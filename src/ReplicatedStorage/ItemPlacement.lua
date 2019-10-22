@@ -1,5 +1,7 @@
---Description: This is the logic behind placing items in game. 
---Any script that places an item (onto a grid) in game should use this script. 
+--[[
+	Description: This is the logic behind placing items in game. 
+	Any script that places an item (onto a grid) in game should use this script. 
+]]
 
 local isServer = game:GetService("RunService"):IsServer()
 local furniture = game:GetService("ReplicatedStorage").Models.Furniture

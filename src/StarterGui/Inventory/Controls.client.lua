@@ -1,19 +1,13 @@
 --Description: allows the player to interact with inventory
-
 mouse = game.Players.LocalPlayer:GetMouse()
 mouseMoveEvent = nil
-
 inventory = script.Parent.Frame:WaitForChild("FullInventory")
-template = inventory:WaitForChild("Template")
+template = inventory.Template
 
--------------------------------------------------------------------------------
--- 								CONTROLS:
--------------------------------------------------------------------------------
 --The following controls work for mobile and pc. 
-
-currentCell = nil 
+currentSlot = nil 
 itemBeingDragged = nil
-startingCell = nil
+startingSlot = nil
 
 --if the player is dragging an item across the screen, 
 --move the item every time the player moves their mouse
@@ -25,11 +19,11 @@ end
 
 --allow player to drag item across screen when the click down on their mouse 
 function onClicked(item)
-	mouseMoveEvent = mouse.Move:Connect(onMouseMove)
-
 	if(item.Name ~= "Default")then
-		startingCell = item.Parent
-		currentCell = startingCell
+		mouseMoveEvent = mouse.Move:Connect(onMouseMove)
+
+		startingSlot = item.Parent
+		currentSlot = startingSlot
 		
 		--scale item based on screen resolution so we can change it's parent and maintain aspect ratio
 		item.Size = UDim2.new(0, item.AbsoluteSize.X, 0, item.AbsoluteSize.Y)
@@ -39,40 +33,56 @@ function onClicked(item)
 	end
 end
 
---move item back to most recently visited cell when player stops clicking
+--move item back to most recently visited slot when player stops clicking
 function onClickEnded(item)
-	mouseMoveEvent:Disconnect()
-	if(startingCell)then
-		local emptyItem = currentCell:FindFirstChild("Default")
+	mouseMoveEvent:Disconnect() -- stop using our mouse moved event
+	
+	--player dragged item to trash
+	if(currentSlot.Name == "Trash")then
+		--TODO: remove deleted slot from inventory
+		item.Parent = startingSlot --put slot back into starting slot and make it an empty slot
+		item.Name = "Default"
+		item.ImageTransparency = 1	
 		
-		--we are in an empty cell, place our item into there
+	elseif(startingSlot)then --player placed item in another item slot
+		local emptyItem = currentSlot:FindFirstChild("Default")
+		
+		--we are in an empty slot, place our item into there
 		if(emptyItem)then
-			item.Parent = currentCell
-			emptyItem.Parent = startingCell
+			item.Parent = currentSlot
+			emptyItem.Parent = startingSlot
 		else	
-			print("back")
-			--we aren't in an empty cell/this is our starter cell so place back at starter cell
-			item.Parent = startingCell
+			item.Parent = startingSlot 	--we aren't in an empty slot/this is our starter slot so place back at starter slot
 		end
-		
-		item.Position = UDim2.new(0.1,0,0.1,0)
-		itemBeingDragged, startingCell=nil, nil
 	end
+	item.Position = UDim2.new(0.1,0,0.1,0)
+	itemBeingDragged, startingSlot=nil, nil
 end
 
---change most recently entered cell when the player enters a new cell
-function onMouseEnter(cell) currentCell = cell end
+--change most recently entered slot when the player enters a new slot
+function onMouseEnter(slot) currentSlot = slot end
 
---create events for the cells we just made
-for _, child in pairs(inventory.Slots:GetChildren()) do
-	local item = child:FindFirstChildWhichIsA("ImageButton")
-	if(item)then
-		item.MouseButton1Down:Connect(function() onClicked(item) end)
-		item.MouseButton1Up:Connect(function() onClickEnded(item) end)
-		child.MouseEnter:Connect(function() onMouseEnter(child) end)
+--this is used by slots such as 'trash' who we don't want to save as our most recent slot when we leave the button area. 
+function onMouseLeave() currentSlot = startingSlot end
+
+--create events for slots
+function createEvents(children)
+	for _, slot in pairs(children) do
+		local item = slot:FindFirstChildWhichIsA("ImageButton")
+		if(item)then
+			item.MouseButton1Down:Connect(function() onClicked(item) end)
+			item.MouseButton1Up:Connect(function() onClickEnded(item) end)
+			slot.MouseEnter:Connect(function() onMouseEnter(slot) end)
+		elseif(slot.Name == "Trash")then
+			slot.MouseButton1Down:Connect(function() onClicked(item) end)
+			slot.MouseButton1Up:Connect(function() onClickEnded(item) end)
+			slot.MouseEnter:Connect(function() onMouseEnter(slot) end)
+			slot.MouseLeave:Connect(onMouseLeave)
+		end
 	end
 end
-
-
+createEvents(inventory.BackpackSlots:GetChildren())
+createEvents(inventory.InventorySlots:GetChildren())
+createEvents({inventory:WaitForChild("Trash")})
 
 

@@ -1,4 +1,7 @@
---Description: This is a class instance for a crop - all the functions and variables that make up a crop.
+--[[
+	Created By: Lucy / royaltoe ( so pls hmu if you have any questions / rants about my bad code)
+	Description: This is a class instance for a crop - all the functions and variables that make up a crop.
+]]
 
 local modelsFolder = game.ReplicatedStorage.Models.Crops
 local cropInfo = require(game.ReplicatedStorage.Constants.Crops)

@@ -11,8 +11,8 @@ dataContainer = {
 	DateCreated = "",
 	
 	Inventory = {
---	    {Item = "potato", Type = "crop", Quality = 2},
---	    {item = "axe", type = "tool", tier = 1}
+	    {Name = "Potato", Type = "Crop", Quality = 1},
+--	    {Name = "axe", type = "Tool", tier = 1}
 	},
 	
 	Character = {

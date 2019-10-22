@@ -14,12 +14,12 @@ players.PlayerRemoving:Connect(function(player)
 	data:Remove(player)
 end)
 
---save data when server closes
-game:BindToClose(function()
-	data:AutoSave()
-end)
+----save data when server closes
+--game:BindToClose(function()
+--	data:AutoSave()
+--end)
 
---save data every 5 mins
-while(wait(7))do
+--save data every 2 mins
+while(wait(60*2))do
 	data:AutoSave()
 end

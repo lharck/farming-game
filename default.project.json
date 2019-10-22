@@ -17,11 +17,6 @@
       "$ignoreUnknownInstances": true,
       "$path": "src/StarterGui"
     },
-    "StarterPack": {
-      "$className": "StarterPack",
-      "$ignoreUnknownInstances": true,
-      "$path": "src/StarterPack"
-    },
     "StarterPlayer": {
       "$className": "StarterPlayer",
       "StarterCharacterScripts": {

@@ -2,7 +2,7 @@ playerData = require(game.ServerScriptService.PlayerDataModule)
 placedItems = require(game.ServerScriptService.ItemPlacement.PlacedItems)
 
 startTime = "06:00"
-endTime = "08:00"
+endTime = "00:00"
 
 --convert time strings specified above to minutes
 function ConvertToMinutes(givenTime)
